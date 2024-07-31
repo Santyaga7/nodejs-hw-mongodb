@@ -10,6 +10,10 @@
     "dev": "nodemon src/index.js"
   },
   "keywords": [],
+<<<<<<< HEAD
+=======
+
+>>>>>>> 228c16f906f3f1df3b7ca5a082a0eacec208c1a8
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "eslint": "^9.2.0",

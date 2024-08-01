@@ -27,7 +27,7 @@ export const setupServer = () => {
       );
       console.log(contacts);
       if (!contacts)
-        return res.json({
+        return res.status(404).json({
           message: 'Contact not found',
         });
 
@@ -41,7 +41,7 @@ export const setupServer = () => {
 
   app.use((req, res, next) => {
     res.status(404).send({
-      message: 'Contact not found',
+      message: 'Not found',
     });
   });
 

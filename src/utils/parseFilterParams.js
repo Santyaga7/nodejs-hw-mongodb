@@ -1,17 +1,27 @@
-import { CONTACT_TYPES_ARRAY } from '../constants/index.js';
-const parseType = (type) => {
-  const isString = typeof type === 'string';
+const parseContactType = (contactType) => {
+  const isString = typeof contactType === 'string';
   if (!isString) return;
-  const isType = (type) => CONTACT_TYPES_ARRAY.includes(type);
-  if (isType(type)) return type;
+  const isContactType = (contactType) =>
+    ['work', 'home', 'personal'].includes(contactType);
+
+  if (isContactType(contactType)) return contactType;
+};
+
+const parseIsFavourite = (isFavourite) => {
+  if (isFavourite === 'true') return true;
+  if (isFavourite === 'false') return false;
+
+  return;
 };
 
 export const parseFilterParams = (query) => {
-  const { type, isFavourite } = query;
+  const { contactType, isFavourite } = query;
 
-  const parsedType = parseType(type);
+  const parsedContactType = parseContactType(contactType);
+  const parsedIsFavourite = parseIsFavourite(isFavourite);
+
   return {
-    type: parsedType,
-    isFavourite,
+    contactType: parsedContactType,
+    isFavourite: parsedIsFavourite,
   };
 };

@@ -3,19 +3,14 @@ import pino from 'pino-http';
 import cors from 'cors';
 import { env } from './utils/env.js';
 import contactsRouter from './routers/contacts.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
-
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 const PORT = Number(env('PORT', '3000'));
 
-export const setupServer = () => {
+export const startServer = () => {
   const app = express();
 
-  app.use(
-    express.json({
-      type: ['application/json', 'application/vnd.api+json'],
-    }),
-  );
+  app.use(express.json());
   app.use(cors());
 
   app.use(
@@ -25,9 +20,11 @@ export const setupServer = () => {
       },
     }),
   );
+
   app.use(contactsRouter);
 
   app.use('*', notFoundHandler);
+
   app.use(errorHandler);
 
   app.listen(PORT, () => {

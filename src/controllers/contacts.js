@@ -44,7 +44,7 @@ export const getContactByIdController = async (req, res, next) => {
 
 export const createContactController = async (req, res, next) => {
   if (!req.body.name || !req.body.phoneNumber) {
-    next(createHttpError(400, 'Name and phone number are required!'));
+    next(createHttpError(400, 'Name and phone number are required'));
     return;
   }
   const contact = await createContact(req.body);

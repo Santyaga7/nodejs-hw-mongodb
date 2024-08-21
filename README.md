@@ -1,1 +1,1 @@
-node-hw-5
+node-hw-5-auth

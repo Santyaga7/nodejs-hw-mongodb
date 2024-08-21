@@ -37,7 +37,7 @@ export const loginUser = async (payload) => {
     userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    accessTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
     refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
   });
 };
@@ -53,7 +53,7 @@ const createSession = () => {
   return {
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    accessTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
     refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
   };
 };

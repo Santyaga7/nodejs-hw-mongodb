@@ -1,7 +1,7 @@
 import { THIRTY_DAYS } from '../constants/index.js';
 import {
   refreshUsersSession,
-  requestResetToken,
+  sendResetToken,
   resetPassword,
 } from '../services/auth.js';
 import { logoutUser } from '../services/auth.js';

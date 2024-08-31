@@ -1,19 +1,16 @@
-import { HttpError } from 'http-errors';
 
-export const errorHandler = (err, req, res, next) => {
-  console.error(err);
-  if (err instanceof HttpError) {
-    res.status(err.status).json({
-      status: err.status,
-      message: err.name,
-      data: err,
+import { isHttpError } from 'http-errors';
+
+// eslint-disable-next-line no-unused-vars
+export async function errorHandler(error, req, res, next) {
+  if (isHttpError(error) === true) {
+    return res.status(error.status).send({
+      status: error.status,
+      message: error.message,
     });
-    return;
   }
 
-  res.status(500).json({
-    status: 500,
-    message: 'Something went wrong',
-    data: err.message,
-  });
-};
+  console.error(error);
+
+  res.status(500).send({ status: 500, message: 'Internal Server Error' });
+}

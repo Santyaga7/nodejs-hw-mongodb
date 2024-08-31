@@ -1,17 +1,21 @@
 import cloudinary from 'cloudinary';
+import dotenv from 'dotenv';
 import fs from 'node:fs/promises';
-import { env } from './env.js';
-import { CLOUDINARY } from '../constants/index.js';
+dotenv.config();
+
+
 
 cloudinary.v2.config({
   secure: true,
-  cloud_name: env(CLOUDINARY.CLOUD_NAME),
-  api_key: env(CLOUDINARY.API_KEY),
-  api_secret: env(CLOUDINARY.API_SECRET),
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export const saveFileToCloudinary = async (file) => {
-  const response = await cloudinary.v2.uploader.upload(file.path);
-  await fs.unlink(file.path);
+  const response = await cloudinary.v2.uploader.upload(file);
+  await fs.unlink(file);
   return response.secure_url;
 };
+
+

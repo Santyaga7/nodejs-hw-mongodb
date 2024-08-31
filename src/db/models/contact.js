@@ -44,9 +44,3 @@ const ContactsCollection = model('contacts', contactsSchema);
 
 export default ContactsCollection;
 
-// Post
-/*{"name": "Yulia Fffffffffffffff",
-"phoneNumber": "+380000000001",
-"email": "Yulia1@example.com",
-"isFavourite": false,
-"contactType": "personal",}*/

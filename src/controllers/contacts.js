@@ -85,11 +85,17 @@ export const createContactController = async (req, res) => {
 };
 
 export const patchContactController = async (req, res, next) => {
+<<<<<<< HEAD
     const { contactId } = req.params;
     const userId = req.user._id;
     const photo = req.file;
 
     let photoUrl;
+=======
+  const { id } = req.params;
+  const photo = req.file;
+  let photoUrl;
+>>>>>>> ddf6431b7b7a483629994dc8cf7118277320fb43
 
     if (photo) {
         if (env(CLOUDINARY.ENABLE_CLOUDINARY) === "true") {
@@ -99,7 +105,18 @@ export const patchContactController = async (req, res, next) => {
         }
     }
 
+<<<<<<< HEAD
     const result = await updateContact(contactId, userId, { ...req.body, photo: photoUrl });
+=======
+  const result = await updateContact(
+    id,
+    {
+      ...req.body,
+      photo: photoUrl,
+    },
+    req.user._id,
+  );
+>>>>>>> ddf6431b7b7a483629994dc8cf7118277320fb43
 
     if (result === null) {
         next(createHttpError(404, "Contact not found"));

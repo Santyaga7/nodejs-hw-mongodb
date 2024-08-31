@@ -1,17 +1,16 @@
 import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-dotenv.config();
+import { env } from './env.js';
+import { SMTP } from '../constant/index.js';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_SERVER,
-  port: process.env.SMTP_PORT,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+export const transport = nodemailer.createTransport({
+  host: env(SMTP.SMTP_HOST),
+  port: Number(env(SMTP.SMTP_PORT)),
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
+    user: env(SMTP.SMTP_USER),
+    pass: env(SMTP.SMTP_PASSWORD),
   },
 });
 
-export const sendEmail = async (options) => {
-  return await transporter.sendMail(options);
+export const sendMail = async (options) => {
+  return await transport.sendMail(options);
 };

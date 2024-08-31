@@ -1,29 +1,13 @@
+import { TEMP_UPLOAD_DIR, UPLOAD_DIR } from './constant/index.js';
+import { initMongoDB } from './db/initMongoDB.js';
+import { setupServer } from './server.js';
+import { createFolderIfDoesNotExist } from './utils/createFolderIfDoesNotExist.js';
 
-
-import dotenv from 'dotenv';
-dotenv.config();
-
-
-import setupServer from './server.js';
-import initMongoConnection from './db/initMongoConnection.js';
-import { createDirIfNotExists } from './utils/createDirIfNotExists.js';
-import { TEMP_UPLOAD_DIR, UPLOAD_DIR } from './constants/index.js';
-
-
-
-const startServer = async () => {
- 
-    await initMongoConnection();
-    console.log('Connected to MongoDB');
-
-    
-    await createDirIfNotExists(TEMP_UPLOAD_DIR);
-    await createDirIfNotExists(UPLOAD_DIR);
-    
- 
-    setupServer();
-
+const bootstrap = async () => {
+  await initMongoDB();
+  await createFolderIfDoesNotExist(TEMP_UPLOAD_DIR);
+  await createFolderIfDoesNotExist(UPLOAD_DIR);
+  setupServer();
 };
 
-
-startServer();
+bootstrap();

@@ -1,49 +1,42 @@
-import dotenv from 'dotenv';
-dotenv.config();
 import express from 'express';
-import path from "node:path";
+import pino from 'pino-http';
 import cors from 'cors';
-import pino from 'pino';
-import cookieParser from 'cookie-parser';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { env } from './utils/env.js';
+import { ENV_VARS, UPLOAD_DIR } from './constant/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
-import router from './routers/index.js'
-import { UPLOAD_DIR } from './constants/index.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import rootRouter from './routers/index.js';
+import cookieParser from 'cookie-parser';
 
+export const setupServer = () => {
+  const app = express();
 
-const app = express();
-const logger = pino();
-
-const setupServer = () => {
-  // Middleware setup
   app.use(express.json());
   app.use(cors());
- 
-
   app.use(cookieParser());
-  app.use("/avatars", express.static(path.resolve("src", "public/avatars")));
 
-  // Logging
-  app.use((req, res, next) => {
-    logger.info(`${req.method} ${req.url}`);
-    next();
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty',
+      },
+    }),
+  );
+
+  app.get('/', (req, res, next) => {
+    res.send('Hello world');
   });
 
-  // Routes
-  app.use('/', router);
+  app.use('/upload', express.static(UPLOAD_DIR));
 
-  // Error handling
+  app.use(rootRouter);
+
   app.use('*', notFoundHandler);
+
   app.use(errorHandler);
 
-  // Start server
-  const PORT = process.env.PORT || 8081;
+  const PORT = Number(env(ENV_VARS.PORT));
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server was start on port ${PORT}`);
   });
 };
-
-//Upload photos
-app.use('/uploads', express.static(UPLOAD_DIR));
-
-export default setupServer;

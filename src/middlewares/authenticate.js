@@ -1,34 +1,43 @@
-import createHttpError from 'http-errors';
-import { SessionCollection } from '../db/models/session.js';
-import { UserCollection } from '../db/models/user.js';
+import createHttpError from "http-errors";
+import { SessionsCollection } from "../db/models/session.js";
+import { UsersCollection } from "../db/models/user.js";
 
 export const authenticate = async (req, res, next) => {
-  const { authorization } = req.headers;
+  const authHeader = req.get("Authorization");
 
-  if (!authorization) {
-    return next(createHttpError(401, 'Provide Authorization header'));
+  if (!authHeader) {
+    next(createHttpError(401, "Please provide Authorization header"));
+    return;
   }
 
-  const [ bearer, authToken ] = authorization.split(' ');
+  const bearer = authHeader.split(" ")[0];
+  const token = authHeader.split(" ")[1];
 
-  if (bearer !== 'Bearer' || !authToken) {
-    return next(createHttpError(401, 'Auth header should be of Bearer type'));
+  if (bearer !== "Bearer" || !token) {
+    next(createHttpError(401, "Auth header should be of type Bearer"));
+    return;
   }
 
-  const session = await SessionCollection.findOne({ accessToken: authToken });
+  const session = await SessionsCollection.findOne({ accessToken: token });
 
   if (!session) {
-    return next(createHttpError(401, 'Session not found'));
+    next(createHttpError(401, "Session not found"));
+    return;
   }
 
-  if (new Date() > new Date(session.accessTokenValidUntil)) {
-    return next(createHttpError(401, 'Access token is expired'));
+  const isAccessTokenExpired =
+    new Date() > new Date(session.accessTokenValidUntil);
+
+  if (isAccessTokenExpired) {
+    next(createHttpError(401, "Access token expired"));
+    return;
   }
 
-  const user = await UserCollection.findById(session.userId);
+  const user = await UsersCollection.findOne({ _id: session.userId });
 
   if (!user) {
-    return next(createHttpError(401, 'Session not found'));
+    next(createHttpError(401, "Session not found"));
+    return;
   }
 
   req.user = user;

@@ -1,17 +1,19 @@
+import { HttpError } from 'http-errors';
 
 export const errorHandler = (err, req, res, next) => {
-console.error('Error:', err);
-  if (err.status === 400 && err.errors) {
-    return res.status(400).json({
-      status: 400,
-      message: 'Validation Error',
-      errors: err.errors,
+  console.error(err);
+  if (err instanceof HttpError) {
+    res.status(err.status).json({
+      status: err.status,
+      message: err.name,
+      data: err,
     });
+    return;
   }
 
-  res.status(err.status || 500).json({
-    status: err.status || 500,
-    message: err.message || 'Something went wrong',
-    errors: err.errors || 'Internal Server Error',
+  res.status(500).json({
+    status: 500,
+    message: 'Something went wrong',
+    data: err.message,
   });
 };

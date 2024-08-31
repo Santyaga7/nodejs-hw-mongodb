@@ -16,31 +16,22 @@ const contactsSchema = new Schema(
     },
     isFavourite: {
       type: Boolean,
+      required: false,
       default: false,
     },
     contactType: {
       type: String,
-      enum: ['work', 'home', 'personal'],
       required: true,
+      enum: ['work', 'home', 'personal'],
       default: 'personal',
     },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'user',
-      required: true,
-    },
-    photo: {
-      type: String,
-      default: null,
-    },
+    userId: { type: Schema.Types.ObjectId, ref: 'users' },
+    photo: { type: String },
   },
+
   {
     timestamps: true,
     versionKey: false,
   },
 );
-
-const ContactsCollection = model('contacts', contactsSchema);
-
-export default ContactsCollection;
-
+export const ContactsCollection = model('contacts', contactsSchema);

@@ -1,4 +1,3 @@
-import express from 'express';
 import { Router } from 'express';
 import {
   createContactController,
@@ -17,46 +16,29 @@ import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
 
-
-
 const router = Router();
-
-const jsonParser = express.json({
-  type: ['application/json', 'application/vnd.api+json'],
-  limit: '100kb',
-});
 
 router.use(authenticate);
 
 router.get('/', ctrlWrapper(getContactsController));
 
-router.get(
-  '/:contactId',
-  isValidId,
-  ctrlWrapper(getContactByIdController),
-);
+router.get('/:id', isValidId, ctrlWrapper(getContactByIdController));
 
 router.post(
   '/',
-  jsonParser,
   upload.single('photo'),
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );
 
+router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
+
 router.patch(
-  '/:contactId',
+  '/:id',
   isValidId,
   upload.single('photo'),
-  jsonParser,
   validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
-);
-
-router.delete(
-  '/:contactId',
-  isValidId,
-  ctrlWrapper(deleteContactController),
 );
 
 export default router;

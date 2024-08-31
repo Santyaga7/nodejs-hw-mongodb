@@ -60,7 +60,6 @@ export const logoutUserController = async (req, res) => {
     res.status(204).end();
 };
 
-<<<<<<< HEAD
 const setupSession = (res, session) => {
     res.cookie("refreshToken", session.refreshToken, {
         httpOnly: true,
@@ -99,15 +98,6 @@ export const requestResetEmailController = async (req, res) => {
         message: "Reset password email has been successfully sent!",
         data: {},
     });
-=======
-export const requestResetEmailController = async (req, res) => {
-  await requestResetToken(req.body.email);
-  res.json({
-    message: 'Reset password email has been successfully sent.',
-    status: 200,
-    data: {},
-  });
->>>>>>> ddf6431b7b7a483629994dc8cf7118277320fb43
 };
 
 export const resetPasswordController = async (req, res) => {

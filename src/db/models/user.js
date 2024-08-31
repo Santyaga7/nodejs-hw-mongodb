@@ -3,14 +3,13 @@ import { model, Schema } from 'mongoose';
 const userSchema = new Schema(
   {
     name: { type: String, required: true },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
   },
-  { timestamps: true, versionKey: false },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
 );
 
 userSchema.methods.toJSON = function () {
@@ -19,4 +18,4 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-export const User = model('users', userSchema);
+export const UserCollection = model('users', userSchema);

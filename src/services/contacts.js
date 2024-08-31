@@ -1,70 +1,74 @@
-import { createPaginationInformation } from '../utils/createPaginationInformation.js';
-import { Contact } from '../db/models/contacts.js';
-import { saveToCloudinary } from '../utils/saveToCloudinary.js';
-import { ENV_VARS } from '../constant/index.js';
-import { env } from '../utils/env.js';
-import { saveFileToLocaleMachine } from '../utils/saveFileToLocaleMachine.js';
-
-export const getPhotoURL = (file) => {
-  if (!file) return;
-
-  if (env(ENV_VARS.IS_CLOUDINARY_ENABLE) === 'true')
-    return saveToCloudinary(file);
-
-  return saveFileToLocaleMachine(file);
-};
+import { ContactsCollection } from '../db/models/contacts.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getAllContacts = async ({
-  page,
-  perPage,
-  sortBy = '_id',
+  page = 1,
+  perPage = 10,
   sortOrder = 'asc',
-  filter,
+  sortBy = '_id',
+  filter = {},
   userId,
 }) => {
+  const limit = perPage;
+  const skip = (page - 1) * perPage;
 
-  const skip = perPage * (page - 1);
+  const contactsQuery = ContactsCollection.find();
 
-  const contactsQuery = Contact.find({});
-
-  if (filter.contactType) {
-    contactsQuery.where('contactType').equals(filter.contactType);
+  if (filter.type) {
+    contactsQuery.where('contactType').equals(filter.type);
   }
+
   if (typeof filter.isFavourite === 'boolean') {
     contactsQuery.where('isFavourite').equals(filter.isFavourite);
   }
-  if (typeof userId === 'string') {
-    contactsQuery.where('userId').equals(userId);
-  }
 
-  const contacts = await contactsQuery
-    .skip(skip)
-    .limit(perPage)
-    .sort({ [sortBy]: sortOrder })
-    .exec();
-  const contactsCount = await Contact.find()
-    .merge(contactsQuery)
-    .countDocuments();
+  contactsQuery.where('userId').equals(userId);
 
-  const paginationIndormation = createPaginationInformation(
-    page,
-    perPage,
-    contactsCount,
-  );
+  const [contactsCount, contacts] = await Promise.all([
+    ContactsCollection.find().merge(contactsQuery).countDocuments(),
+    contactsQuery
+      .skip(skip)
+      .limit(limit)
+      .sort({ [sortBy]: sortOrder })
+      .exec(),
+  ]);
+
+  const paginationData = calculatePaginationData(contactsCount, perPage, page);
 
   return {
-    contacts: contacts,
-    totalItems: contactsCount,
-    ...paginationIndormation,
+    data: contacts,
+    ...paginationData,
   };
 };
-export const getContactById = ({ _id, userId }) =>
-  Contact.findOne({ _id, userId });
 
-export const createContact = async (payload) => await Contact.create(payload);
-
-export const updateContact = (filter, payload) => {
-  return Contact.findOneAndUpdate(filter, payload, { new: true });
+export const getContactById = async ({ _id, userId }) => {
+  return await ContactsCollection.findOne({ _id, userId });
 };
 
-export const deleteContact = (id) => Contact.findByIdAndDelete(id);
+export const createContact = async (payload) => {
+  return await ContactsCollection.create(payload);
+};
+
+export const updateContact = async ({contactId, userId}, payload, options = {}) => {
+  const contactToUpdate = await ContactsCollection.findOneAndUpdate(
+    {
+      _id: contactId,
+      userId
+     },
+    payload,
+    {
+      new: true,
+      ...options,
+    },
+  );
+
+  if (!contactToUpdate) return null;
+  return contactToUpdate;
+};
+
+export const deleteContact = async ({ contactId, userId }) => {
+  return await ContactsCollection.findOneAndDelete({
+      _id: contactId,
+      userId
+     });
+};

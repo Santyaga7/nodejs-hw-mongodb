@@ -1,6 +1,5 @@
 const parseNumber = (number, defaultValue) => {
-  const isString = typeof number === 'string';
-  if (!isString) return defaultValue;
+  if (typeof number !== 'string') return defaultValue;
 
   const parsedNumber = parseInt(number);
   if (Number.isNaN(parsedNumber)) {
@@ -10,12 +9,14 @@ const parseNumber = (number, defaultValue) => {
   return parsedNumber;
 };
 
-export const parsePaginationParams = ({
-  page,
-  perPage,
-}) => {
+export const parsePaginationParams = (query) => {
+  const { page, perPage } = query;
+
+  const parsedPage = parseNumber(page, 1);
+  const parsedPerPage = parseNumber(perPage, 10);
+
   return {
-    page: parseNumber(page, 1),
-    perPage: parseNumber(perPage, 10),
+    page: parsedPage,
+    perPage: parsedPerPage,
   };
 };

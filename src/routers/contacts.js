@@ -1,43 +1,52 @@
 import { Router } from 'express';
 import {
-  createContactsController,
+  createContactController,
   deleteContactController,
-  getAllContactsController,
   getContactByIdController,
-  updateContactsController,
+  getContactsController,
+  patchContactController,
 } from '../controllers/contacts.js';
-import { ctrlWrapper } from '../middlewares/ctrlWrapper.js';
-import { validateBody } from '../middlewares/validateBody.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
-  createContactShema,
-  updateContactShema,
-} from '../validation/contacts.js';
+  createContactsValidationSchema,
+  updateContactsValidationSchema,
+} from '../validation/contactsValidationSchema.js';
+import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
-import { upload } from '../middlewares/upload.js';
+import { upload } from '../middlewares/multer.js';
 
 const contactsRouter = Router();
 
-contactsRouter.use('/:contactId', isValidId);
-contactsRouter.use('/', authenticate);
+contactsRouter.use(authenticate);
 
-contactsRouter.get('/', ctrlWrapper(getAllContactsController));
+contactsRouter.get('/', ctrlWrapper(getContactsController));
 
-contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
+contactsRouter.get(
+  '/:contactId',
+  isValidId,
+  ctrlWrapper(getContactByIdController),
+);
 
 contactsRouter.post(
   '/',
   upload.single('photo'),
-  validateBody(createContactShema),
-  ctrlWrapper(createContactsController),
+  validateBody(createContactsValidationSchema),
+  ctrlWrapper(createContactController),
 );
 
 contactsRouter.patch(
   '/:contactId',
+  isValidId,
   upload.single('photo'),
-  validateBody(updateContactShema),
-  ctrlWrapper(updateContactsController),
+  validateBody(updateContactsValidationSchema),
+  ctrlWrapper(patchContactController),
 );
 
-contactsRouter.delete('/:contactId', ctrlWrapper(deleteContactController));
+contactsRouter.delete(
+  '/:contactId',
+  isValidId,
+  ctrlWrapper(deleteContactController),
+);
+
 export default contactsRouter;

@@ -14,7 +14,7 @@
       "url": "http://localhost:3000"
     },
     {
-      "url": "https://nodejs-hw-mongodb-xz5p.onrender.com"
+      "url": "https://nodejs-hw-mongodb-7-luav.onrender.com"
     }
   ],
   "tags": [
@@ -215,7 +215,7 @@
                   "email": {
                     "description": "Contact is email",
                     "type": "string",
-                    "example": "dmytro3@example.com"
+                    "example": "Doe@example.com"
                   },
                   "isFavourite": {
                     "description": "Contact isFavourite or no",
